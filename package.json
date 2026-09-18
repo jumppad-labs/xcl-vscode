@@ -1,0 +1,60 @@
+{
+  "name": "vscode-xcl",
+  "displayName": "XCL",
+  "description": "Syntax highlighting for XCL configuration files.",
+  "version": "0.1.0",
+  "publisher": "jumppad-labs",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jumppad-labs/vscode-xcl.git"
+  },
+  "bugs": {
+    "url": "https://github.com/jumppad-labs/vscode-xcl/issues"
+  },
+  "homepage": "https://github.com/jumppad-labs/vscode-xcl#readme",
+  "keywords": [
+    "xcl",
+    "jumppad",
+    "hcl",
+    "configuration",
+    "syntax"
+  ],
+  "categories": [
+    "Programming Languages"
+  ],
+  "engines": {
+    "vscode": "^1.75.0"
+  },
+  "scripts": {
+    "test": "node test/tokenize.test.js",
+    "package": "vsce package"
+  },
+  "devDependencies": {
+    "@vscode/vsce": "^3.2.0",
+    "vscode-oniguruma": "^2.0.1",
+    "vscode-textmate": "^9.1.0"
+  },
+  "contributes": {
+    "languages": [
+      {
+        "id": "xcl",
+        "aliases": [
+          "XCL",
+          "xcl"
+        ],
+        "extensions": [
+          ".xcl"
+        ],
+        "configuration": "./language-configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "xcl",
+        "scopeName": "source.xcl",
+        "path": "./syntaxes/xcl.tmLanguage.json"
+      }
+    ]
+  }
+}

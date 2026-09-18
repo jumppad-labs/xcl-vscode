@@ -1,0 +1,190 @@
+{
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "name": "XCL",
+  "scopeName": "source.xcl",
+  "patterns": [
+    { "include": "#comments" },
+    { "include": "#blocks" },
+    { "include": "#attribute" },
+    { "include": "#expression" }
+  ],
+  "repository": {
+    "comments": {
+      "patterns": [
+        {
+          "name": "comment.line.double-slash.xcl",
+          "begin": "//",
+          "end": "$"
+        },
+        {
+          "name": "comment.line.number-sign.xcl",
+          "begin": "#",
+          "end": "$"
+        },
+        {
+          "name": "comment.block.xcl",
+          "begin": "/\\*",
+          "end": "\\*/"
+        }
+      ]
+    },
+
+    "blocks": {
+      "patterns": [
+        {
+          "comment": "Labelled top-level blocks: resource \"type\" \"name\" {",
+          "match": "\\b(resource|module|variable|output|local)\\b(?!\\s*\\.)(?:\\s+(\"[^\"]*\"))?(?:\\s+(\"[^\"]*\"))?",
+          "captures": {
+            "1": { "name": "storage.type.xcl" },
+            "2": { "name": "entity.name.type.xcl" },
+            "3": { "name": "entity.name.tag.xcl" }
+          }
+        },
+        {
+          "comment": "Nested block header: identifier {",
+          "match": "(?<![.\\w-])([a-zA-Z_][a-zA-Z0-9_-]*)\\b(?=\\s*\\{)",
+          "captures": {
+            "1": { "name": "entity.name.function.block.xcl" }
+          }
+        }
+      ]
+    },
+
+    "attribute": {
+      "comment": "identifier = value",
+      "match": "\\b([a-zA-Z_][a-zA-Z0-9_-]*)\\b(?=\\s*=(?!=))",
+      "captures": {
+        "1": { "name": "variable.other.property.xcl" }
+      }
+    },
+
+    "expression": {
+      "patterns": [
+        { "include": "#heredoc" },
+        { "include": "#string" },
+        { "include": "#numeric" },
+        { "include": "#language_constant" },
+        { "include": "#functions" },
+        { "include": "#reference" },
+        { "include": "#operators" }
+      ]
+    },
+
+    "language_constant": {
+      "name": "constant.language.xcl",
+      "match": "\\b(true|false|null)\\b"
+    },
+
+    "numeric": {
+      "name": "constant.numeric.xcl",
+      "match": "\\b-?(0x[0-9a-fA-F]+|[0-9]+(\\.[0-9]+)?([eE][+-]?[0-9]+)?)\\b"
+    },
+
+    "functions": {
+      "comment": "Built-in functions registered by xclconfig, plus any user call",
+      "patterns": [
+        {
+          "match": "\\b(abs|ceil|chomp|chunklist|coalescelist|compact|concat|contains|csvdecode|dir|distinct|element|env|file|flatten|floor|format|formatdate|formatlist|home|indent|join|jsondecode|jsonencode|keys|len|log|lower|max|merge|min|parseint|pow|range|regex|regexall|reverse|setintersection|setproduct|setsubtract|setunion|signum|slice|sort|split|strrev|substr|template_file|timeadd|title|trim|trimprefix|trimspace|trimsuffix|upper|values|zipmap)\\b(?=\\s*\\()",
+          "name": "support.function.builtin.xcl"
+        },
+        {
+          "match": "\\b([a-zA-Z_][a-zA-Z0-9_]*)\\b(?=\\s*\\()",
+          "name": "entity.name.function.xcl"
+        }
+      ]
+    },
+
+    "reference": {
+      "comment": "Reference chains such as resource.network.test.name or variable.cpu",
+      "patterns": [
+        {
+          "match": "\\b(resource|module|variable|output|local)\\b(?=\\.)",
+          "name": "support.class.reference.xcl"
+        },
+        {
+          "match": "(\\.)([a-zA-Z_][a-zA-Z0-9_-]*)",
+          "captures": {
+            "1": { "name": "punctuation.accessor.xcl" },
+            "2": { "name": "variable.other.member.xcl" }
+          }
+        }
+      ]
+    },
+
+    "operators": {
+      "name": "keyword.operator.xcl",
+      "match": "(==|!=|>=|<=|&&|\\|\\||[+\\-*/%<>!]|\\?|:|=)"
+    },
+
+    "string": {
+      "name": "string.quoted.double.xcl",
+      "begin": "\"",
+      "end": "\"",
+      "patterns": [
+        { "include": "#string_escape" },
+        { "include": "#interpolation" }
+      ]
+    },
+
+    "string_escape": {
+      "name": "constant.character.escape.xcl",
+      "match": "\\\\(n|r|t|\"|\\\\|u[0-9a-fA-F]{4})"
+    },
+
+    "interpolation": {
+      "comment": "HCL-style ${ ... } interpolation",
+      "name": "meta.interpolation.xcl",
+      "begin": "\\$\\{",
+      "end": "\\}",
+      "beginCaptures": {
+        "0": { "name": "punctuation.section.interpolation.begin.xcl" }
+      },
+      "endCaptures": {
+        "0": { "name": "punctuation.section.interpolation.end.xcl" }
+      },
+      "patterns": [
+        { "include": "#expression" }
+      ]
+    },
+
+    "template_interpolation": {
+      "comment": "Template-file style #{{ .Vars.x }} used inside heredocs",
+      "name": "meta.interpolation.template.xcl",
+      "begin": "#\\{\\{",
+      "end": "\\}\\}",
+      "beginCaptures": {
+        "0": { "name": "punctuation.section.interpolation.begin.xcl" }
+      },
+      "endCaptures": {
+        "0": { "name": "punctuation.section.interpolation.end.xcl" }
+      },
+      "patterns": [
+        {
+          "match": "(\\.)([a-zA-Z_][a-zA-Z0-9_]*)",
+          "captures": {
+            "1": { "name": "punctuation.accessor.xcl" },
+            "2": { "name": "variable.other.member.xcl" }
+          }
+        }
+      ]
+    },
+
+    "heredoc": {
+      "comment": "<<EOF and indented <<-EOF heredocs; terminator must match the opening tag",
+      "name": "string.unquoted.heredoc.xcl",
+      "begin": "(<<-?)\\s*([A-Za-z_][A-Za-z0-9_]*)\\s*$",
+      "end": "^\\s*\\2\\s*$",
+      "beginCaptures": {
+        "1": { "name": "keyword.operator.heredoc.xcl" },
+        "2": { "name": "keyword.control.heredoc.xcl" }
+      },
+      "endCaptures": {
+        "0": { "name": "keyword.control.heredoc.xcl" }
+      },
+      "patterns": [
+        { "include": "#template_interpolation" },
+        { "include": "#interpolation" }
+      ]
+    }
+  }
+}
