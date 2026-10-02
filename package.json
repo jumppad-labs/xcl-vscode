@@ -1,5 +1,5 @@
 {
-  "name": "vscode-xcl",
+  "name": "xcl-vscode",
   "displayName": "XCL",
   "description": "Syntax highlighting for XCL configuration files.",
   "version": "0.1.0",
@@ -7,12 +7,12 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/jumppad-labs/vscode-xcl.git"
+    "url": "https://github.com/jumppad-labs/xcl-vscode.git"
   },
   "bugs": {
-    "url": "https://github.com/jumppad-labs/vscode-xcl/issues"
+    "url": "https://github.com/jumppad-labs/xcl-vscode/issues"
   },
-  "homepage": "https://github.com/jumppad-labs/vscode-xcl#readme",
+  "homepage": "https://github.com/jumppad-labs/xcl-vscode#readme",
   "keywords": [
     "xcl",
     "jumppad",

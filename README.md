@@ -1,6 +1,6 @@
 # XCL for Visual Studio Code
 
-Syntax highlighting for [XCL](https://github.com/jumppad-labs/xclconfig)
+Syntax highlighting for [XCL](https://github.com/jumppad-labs/xcl)
 (`.xcl`) configuration files.
 
 ## Install
@@ -8,13 +8,13 @@ Syntax highlighting for [XCL](https://github.com/jumppad-labs/xclconfig)
 Until this is published to the Marketplace, install from source:
 
 ```sh
-git clone https://github.com/jumppad-labs/vscode-xcl.git
+git clone https://github.com/jumppad-labs/xcl-vscode.git
 
 # VS Code (local)
-cp -r vscode-xcl ~/.vscode/extensions/jumppad-labs.vscode-xcl-0.1.0
+cp -r xcl-vscode ~/.vscode/extensions/jumppad-labs.xcl-vscode-0.1.0
 
 # VS Code Remote / WSL
-cp -r vscode-xcl ~/.vscode-server/extensions/jumppad-labs.vscode-xcl-0.1.0
+cp -r xcl-vscode ~/.vscode-server/extensions/jumppad-labs.xcl-vscode-0.1.0
 ```
 
 Then run **Developer: Reload Window** from the command palette.
@@ -24,7 +24,7 @@ Alternatively, build and install a `.vsix`:
 ```sh
 npm install
 npm run package
-code --install-extension vscode-xcl-0.1.0.vsix
+code --install-extension xcl-vscode-0.1.0.vsix
 ```
 
 ## What it highlights
