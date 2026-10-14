@@ -1,0 +1,18 @@
+schema: 2
+written_by: dev
+description: VS Code extension providing XCL syntax highlighting
+tags:
+    - editor
+    - vscode
+source:
+    provider: file
+    config:
+        location: ..
+knowledge:
+    provider: file
+    config:
+        location: knowledge
+changelog:
+    provider: file
+    config:
+        directory: changelog
