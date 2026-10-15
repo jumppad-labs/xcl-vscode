@@ -4,7 +4,7 @@
   "scopeName": "source.xcl",
   "patterns": [
     { "include": "#comments" },
-    { "include": "#blocks" },
+    { "include": "#top_block" },
     { "include": "#attribute" },
     { "include": "#expression" }
   ],
@@ -29,24 +29,66 @@
       ]
     },
 
-    "blocks": {
+    "top_block": {
+      "comment": "A top-level block of any type: a singleton, runner {; a label, agent \"claude\" {; or a subtype and a label, resource \"network\" \"onprem\" {",
+      "name": "meta.block.xcl",
+      "begin": "^\\s*([a-zA-Z_][a-zA-Z0-9_-]*)(?:\\s+(\"[^\"]*\")\\s+(\"[^\"]*\")|\\s+(\"[^\"]*\"))?\\s*(\\{)",
+      "end": "\\}",
+      "beginCaptures": {
+        "1": { "name": "storage.type.xcl" },
+        "2": { "name": "entity.name.type.xcl" },
+        "3": { "name": "entity.name.tag.xcl" },
+        "4": { "name": "entity.name.tag.xcl" },
+        "5": { "name": "punctuation.section.block.begin.xcl" }
+      },
+      "endCaptures": {
+        "0": { "name": "punctuation.section.block.end.xcl" }
+      },
       "patterns": [
-        {
-          "comment": "Labelled top-level blocks: resource \"type\" \"name\" {",
-          "match": "\\b(resource|module|variable|output|local)\\b(?!\\s*\\.)(?:\\s+(\"[^\"]*\"))?(?:\\s+(\"[^\"]*\"))?",
-          "captures": {
-            "1": { "name": "storage.type.xcl" },
-            "2": { "name": "entity.name.type.xcl" },
-            "3": { "name": "entity.name.tag.xcl" }
-          }
-        },
-        {
-          "comment": "Nested block header: identifier {",
-          "match": "(?<![.\\w-])([a-zA-Z_][a-zA-Z0-9_-]*)\\b(?=\\s*\\{)",
-          "captures": {
-            "1": { "name": "entity.name.function.block.xcl" }
-          }
-        }
+        { "include": "#body" }
+      ]
+    },
+
+    "nested_block": {
+      "comment": "A block inside another block: health {, or volume \"data\" {",
+      "begin": "(?<![.\\w-])([a-zA-Z_][a-zA-Z0-9_-]*)((?:\\s+\"[^\"]*\")*)\\s*(\\{)",
+      "end": "\\}",
+      "beginCaptures": {
+        "1": { "name": "entity.name.function.block.xcl" },
+        "2": { "name": "entity.name.tag.xcl" },
+        "3": { "name": "punctuation.section.block.begin.xcl" }
+      },
+      "endCaptures": {
+        "0": { "name": "punctuation.section.block.end.xcl" }
+      },
+      "patterns": [
+        { "include": "#body" }
+      ]
+    },
+
+    "object": {
+      "comment": "An object value, { key = value }, which holds attributes but no blocks",
+      "begin": "\\{",
+      "end": "\\}",
+      "beginCaptures": {
+        "0": { "name": "punctuation.section.braces.begin.xcl" }
+      },
+      "endCaptures": {
+        "0": { "name": "punctuation.section.braces.end.xcl" }
+      },
+      "patterns": [
+        { "include": "#comments" },
+        { "include": "#attribute" },
+        { "include": "#expression" }
+      ]
+    },
+
+    "body": {
+      "patterns": [
+        { "include": "#comments" },
+        { "include": "#nested_block" },
+        { "include": "#attribute" },
+        { "include": "#expression" }
       ]
     },
 
@@ -66,6 +108,7 @@
         { "include": "#language_constant" },
         { "include": "#functions" },
         { "include": "#reference" },
+        { "include": "#object" },
         { "include": "#operators" }
       ]
     },
@@ -95,10 +138,10 @@
     },
 
     "reference": {
-      "comment": "Reference chains such as resource.network.test.name or variable.cpu",
+      "comment": "Reference chains headed by a keyword or any type: resource.network.test.name, variable.cpu, agent.claude.model, or a singleton's runner.server",
       "patterns": [
         {
-          "match": "\\b(resource|module|variable|output|local)\\b(?=\\.)",
+          "match": "(?<![.\\w-])([a-zA-Z_][a-zA-Z0-9_-]*)(?=\\.[a-zA-Z_])",
           "name": "support.class.reference.xcl"
         },
         {
