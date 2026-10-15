@@ -56,6 +56,18 @@ function assertScope(tokens, text, scope) {
   );
 }
 
+// Asserts no token whose text is exactly `text` carries a scope containing `scope`.
+function assertNoScope(tokens, text, scope) {
+  const matches = tokens.filter((t) => t.text === text);
+  assert.ok(matches.length > 0, `no token found with text ${JSON.stringify(text)}`);
+  assert.ok(
+    !matches.some((t) => t.scopes.some((s) => s.includes(scope))),
+    `token ${JSON.stringify(text)} has scope ${scope}; got ${JSON.stringify(
+      matches.map((m) => m.scopes)
+    )}`
+  );
+}
+
 (async () => {
   const tokens = await tokenize(path.join(__dirname, 'fixtures', 'sample.xcl'));
 
@@ -96,8 +108,28 @@ function assertScope(tokens, text, scope) {
   assertScope(tokens, '#{{', 'punctuation.section.interpolation.begin.xcl');
   assertScope(tokens, 'Vars', 'variable.other.member.xcl');
 
-  // Reference chains.
+  // Blocks of any registered type: a singleton without labels and a type
+  // with one label, which is the block's name.
+  assertScope(tokens, 'runner', 'storage.type.xcl');
+  assertScope(tokens, 'agent', 'storage.type.xcl');
+  assertScope(tokens, 'task', 'storage.type.xcl');
+  assertScope(tokens, '"claude"', 'entity.name.tag.xcl');
+
+  // A nested block is not a top-level type, though a singleton's header looks alike.
+  assertScope(tokens, 'health', 'entity.name.function.block.xcl');
+  assertNoScope(tokens, 'health', 'storage.type.xcl');
+  assertScope(tokens, 'path', 'variable.other.property.xcl');
+
+  // An object value holds attributes, and its closing brace does not close the block.
+  assertScope(tokens, 'data_dir', 'variable.other.property.xcl');
+  assertScope(tokens, 'items', 'variable.other.property.xcl');
+
+  // Reference chains, headed by a keyword or any type, singletons included.
   assertScope(tokens, 'resource', 'support.class.reference.xcl');
+  assertScope(tokens, 'runner', 'support.class.reference.xcl');
+  assertScope(tokens, 'agent', 'support.class.reference.xcl');
+  assertScope(tokens, 'module', 'support.class.reference.xcl');
+  assertScope(tokens, 'server', 'variable.other.member.xcl');
 
   // A heredoc must not leak: content after its terminator is parsed as code.
   const after = tokens.filter((t) => t.text === 'append_file');

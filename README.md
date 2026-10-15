@@ -29,11 +29,15 @@ code --install-extension xcl-vscode-0.1.0.vsix
 
 ## What it highlights
 
-- Block declarations — `resource`, `module`, `variable`, `output`, `local` —
-  with the type and name labels scoped separately.
-- Nested blocks (`network {`, `volume {`) and attribute names.
-- Reference chains such as `resource.network.test.name`, distinguished from
-  block declarations of the same keyword.
+- Top-level blocks of any type — `resource`, `module`, `variable`, `output`
+  and every registered type — with the subtype and name labels scoped
+  separately: `agent "claude" {`, `resource "network" "onprem" {`, and a
+  singleton written without labels, `runner {`.
+- Nested blocks (`health {`, `volume "data" {`), scoped apart from top-level
+  blocks, and attribute names.
+- Reference chains headed by any type, such as `resource.network.test.name`,
+  `agent.claude.model` or a singleton's `runner.server`, distinguished from
+  block declarations of the same type.
 - The built-in functions registered by xclconfig (`env`, `file`, `len`,
   `template_file`, `jsonencode`, …); unknown calls still highlight as functions.
 - Strings with `${ ... }` interpolation and escapes.

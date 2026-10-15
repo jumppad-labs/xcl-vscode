@@ -42,3 +42,21 @@ module "mod" {
 output "out" {
   value = resource.network.onprem.subnet
 }
+
+runner {
+  server = "https://maalstrom.app"
+}
+
+agent "claude" {
+  model    = "claude/opus"
+  endpoint = runner.server
+
+  health {
+    path = "/healthz"
+  }
+}
+
+task "document" {
+  agents = [agent.claude]
+  url    = module.mod.runner.server
+}
